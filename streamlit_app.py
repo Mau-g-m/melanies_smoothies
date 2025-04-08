@@ -1,5 +1,6 @@
 import streamlit as st
 from snowflake.snowpark.functions import col
+import requests
 
 st.set_page_config(page_title="🍓 Smoothie App", page_icon=":cup_with_straw:")
 st.title("🍓 Melanie's Smoothies App")
@@ -42,3 +43,6 @@ if submit:
             st.success("Your Smoothie is ordered! ✅")
         except Exception as e:
             st.error(f"Something went wrong: {e}")
+
+smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
+st.text(smoothiefroot_response)
