@@ -22,12 +22,12 @@ ingredients_list = st.multiselect(
     max_selections=5
 )
 
-# El botón siempre visible
+# 💡 Muestra el botón después de que se capturan los inputs
 submit = st.button("✅ Submit Order")
 
-# Validaciones cuando el botón se presiona
+# Procesar solo cuando se presiona el botón
 if submit:
-    if not name_on_order:
+    if not name_on_order.strip():
         st.warning("Please enter your name.")
     elif not ingredients_list:
         st.warning("Please select at least one ingredient.")
