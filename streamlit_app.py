@@ -1,6 +1,6 @@
 import streamlit as st
 from snowflake.snowpark.functions import col
-streamlit.title(My parents new healthy dinner)
+streamlit.title('My parents new healthy dinner')
 
 st.title(":cup_with_straw: Customize your smoothie! :cup_with_straw:")
 st.write("Choose the fruits tou want in your custom Smoothie!")
