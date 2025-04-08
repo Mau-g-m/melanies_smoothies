@@ -22,16 +22,17 @@ ingredients_list = st.multiselect(
     max_selections=5
 )
 
-# Validar entrada
-if not name_on_order:
-    st.warning("Please enter your name.")
-elif not ingredients_list:
-    st.warning("Please select at least one ingredient.")
-else:
-    ingredients_string = ", ".join(ingredients_list)
-    submit = st.button("✅ Submit Order")
+# El botón siempre visible
+submit = st.button("✅ Submit Order")
 
-    if submit:
+# Validaciones cuando el botón se presiona
+if submit:
+    if not name_on_order:
+        st.warning("Please enter your name.")
+    elif not ingredients_list:
+        st.warning("Please select at least one ingredient.")
+    else:
+        ingredients_string = ", ".join(ingredients_list)
         insert_stmt = f"""
             INSERT INTO smoothies.public.orders (ingredients, name_on_order)
             VALUES ('{ingredients_string}', '{name_on_order}')
