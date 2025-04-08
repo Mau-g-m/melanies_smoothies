@@ -1,43 +1,43 @@
-#import python packages
 import streamlit as st
 from snowflake.snowpark.functions import col
 
-st.title('My parents new healthy dinner')
+st.set_page_config(page_title="🍓 Smoothie App", page_icon=":cup_with_straw:")
+st.title("🍓 Melanie's Smoothies App")
+st.subheader(":cup_with_straw: Customize your smoothie! :cup_with_straw:")
+st.write("Choose the fruits you want in your custom Smoothie!")
 
-st.title(":cup_with_straw: Customize your smoothie! :cup_with_straw:")
-st.write("Choose the fruits tou want in your custom Smoothie!")
-
-name_on_order = st.text_input("Name on Smoothie: ")
-st.write("The name on your Smoothie will be: ", name_on_order)
-
+# Conexión a Snowflake
 cnx = st.connection("snowflake", type="snowflake")
 session = cnx.session()
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME')) 
-# st.dataframe(data=my_dataframe, use_container_width=True)
 
+# Cargar frutas desde tabla
+df_snowflake = session.table("SMOOTHIES.PUBLIC.FRUIT_OPTIONS").select(col("FRUIT_NAME"))
+fruit_list = [row["FRUIT_NAME"] for row in df_snowflake.collect()]
+
+# Inputs del usuario
+name_on_order = st.text_input("🧑‍🍳 Name on Smoothie:")
 ingredients_list = st.multiselect(
-    'choose up to 5 ingredients:'
-   , my_dataframe
-    , max_selections=5
+    "🥝 Choose up to 5 ingredients:",
+    fruit_list,
+    max_selections=5
 )
 
-if ingredients_list: 
-    ingredients_string = ''
+# Validar entrada
+if not name_on_order:
+    st.warning("Please enter your name.")
+elif not ingredients_list:
+    st.warning("Please select at least one ingredient.")
+else:
+    ingredients_string = ", ".join(ingredients_list)
+    submit = st.button("✅ Submit Order")
 
-    for fruit_chosen in ingredients_list:
-        ingredients_string += fruit_chosen + ' '
-
-    #st.write(ingredients_string) 
-
-
-    my_insert_stmt = """ insert into smoothies.public.orders(ingredients , name_on_order)
-            values ('""" + ingredients_string + """','"""+name_on_order+"""')"""
-
-    st.write(my_insert_stmt) 
-    #st.stop()
-    time_to_insert = st.button("Submit Order")
-
-
-if time_to_insert:
-    session.sql(my_insert_stmt).collect()
-    st.success("Your Smoothie is ordered! ", icon="✅")
+    if submit:
+        insert_stmt = f"""
+            INSERT INTO smoothies.public.orders (ingredients, name_on_order)
+            VALUES ('{ingredients_string}', '{name_on_order}')
+        """
+        try:
+            session.sql(insert_stmt).collect()
+            st.success("Your Smoothie is ordered! ✅")
+        except Exception as e:
+            st.error(f"Something went wrong: {e}")
