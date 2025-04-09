@@ -4,7 +4,6 @@ import requests
 
 st.title(":cup_with_straw: Customize your smoothie! :cup_with_straw:")
 st.write("Choose the fruits tou want in your custom Smoothie!")
-
 name_on_order = st.text_input("Name on Smoothie: ")
 st.write("The name on your Smoothie will be: ", name_on_order)
 
@@ -17,6 +16,8 @@ ingredients_list = st.multiselect(
    , my_dataframe
    , max_selections=5
 )
+
+time_to_insert = False
 
 if ingredients_list: 
     ingredients_string = ''
